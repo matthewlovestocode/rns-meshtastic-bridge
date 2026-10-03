@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible defect without including radio or identity secrets
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never paste private keys, channel PSKs, complete `meshtastic --info`
+        output, or private application payloads into an issue.
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include the smallest safe example that reproduces the issue.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version or commit
+    validations:
+      required: true
+
+  - type: dropdown
+    id: transmit
+    attributes:
+      label: Was Meshtastic transmission explicitly enabled?
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Python, operating system, Reticulum, Meshtastic client, and hardware versions.
+    validations:
+      required: true

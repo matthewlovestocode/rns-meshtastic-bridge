@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rns-meshtastic-bridge"
+version = "0.1.0a1"
+description = "A safety-staged bridge between the Reticulum Network Stack and Meshtastic LoRa mesh radios"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Matthew Stewart" },
+]
+dependencies = [
+    "rns==1.5.6",
+]
+keywords = ["reticulum", "meshtastic", "lora", "mesh-network", "bridge"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Communications",
+    "Topic :: System :: Networking",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+# Only a host physically connected to a Meshtastic radio needs this extra;
+# everything else in this package (the full protocol core, the Reticulum
+# destination, tests) runs without it.
+edge = [
+    "meshtastic==2.7.11",
+]
+dev = [
+    "pytest==8.4.2",
+    "pytest-cov==7.0.0",
+]
+
+[project.scripts]
+# Live services and operator tools, runnable once this package is installed
+# without needing `python -m rns_meshtastic_bridge.<module>`.
+rns-bridge-receive = "rns_meshtastic_bridge.receive_service:main"
+rns-bridge-service = "rns_meshtastic_bridge.bridge_service:main"
+rns-bridge-reticulum-destination = "rns_meshtastic_bridge.reticulum_destination:main"
+rns-bridge-transmit-check = "rns_meshtastic_bridge.transmit_check:main"
+rns-bridge-send-message = "rns_meshtastic_bridge.send_message:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+rns_meshtastic_bridge = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--cov=rns_meshtastic_bridge",
+    "--cov-report=term-missing",
+    "--cov-fail-under=90",
+]
+markers = [
+    "integration: hardware-free tests that compose multiple bridge layers",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src/rns_meshtastic_bridge"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+    "if __name__ == [\"']__main__[\"']:",
+]

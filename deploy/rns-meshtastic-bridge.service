@@ -1,0 +1,37 @@
+[Unit]
+Description=rns-meshtastic-bridge: combined Reticulum/Meshtastic bridge (transmit disabled unless --enable-transmit is added)
+After=default.target
+
+[Service]
+Type=simple
+
+# Adjust these for your own deployment:
+# - WorkingDirectory/venv path: wherever you installed this package.
+# - --serial: your Meshtastic device's stable path. Prefer /dev/serial/by-id/...
+#   (Linux) over /dev/ttyACM0, which can change across reboots or USB
+#   re-enumeration.
+# - --channel: the Meshtastic channel index this bridge listens on and
+#   transmits to (0-7). There is no default; pick the channel deliberately.
+# - --allowlist-file / --recipients-file: small, local, operator-edited
+#   lists (one hex-encoded identity/destination hash per line, '#' comments
+#   allowed). See README.md's "Configuration" section for the exact format
+#   and how to populate them.
+#
+# Transmission is OFF by default. Add --enable-transmit and --rate only
+# after reading README.md's safety section and deliberately deciding on a
+# transmit rate appropriate for your region's spectrum regulations and your
+# radio's airtime budget.
+WorkingDirectory=%h/rns-meshtastic-bridge
+ExecStart=%h/rns-meshtastic-bridge/.venv/bin/rns-bridge-service \
+  --serial /dev/serial/by-id/REPLACE-WITH-YOUR-DEVICES-STABLE-PATH \
+  --channel 1 \
+  --reticulum-config %h/.reticulum-bridge \
+  --allowlist-file %h/rns-meshtastic-bridge/bridge-allowlist.txt \
+  --recipients-file %h/rns-meshtastic-bridge/bridge-recipients.txt \
+  --dedup-snapshot %h/.reticulum-bridge/dedup-snapshot.bin
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
