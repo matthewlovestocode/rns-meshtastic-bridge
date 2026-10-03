@@ -4,10 +4,23 @@ updates:
     directory: "/"
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
+    # Keep routine Python updates in one monthly PR instead of opening one PR
+    # per direct and transitive dependency. Security updates are managed by
+    # GitHub separately from this version-update limit.
+    open-pull-requests-limit: 1
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
+    # Actions use a separate ecosystem, so group them into their own single PR.
+    # Together these limits allow at most two routine Dependabot PRs at once.
+    open-pull-requests-limit: 1
+    groups:
+      github-actions:
+        patterns:
+          - "*"
